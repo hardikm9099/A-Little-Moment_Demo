@@ -1,0 +1,569 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Happy Birthday! ✨</title>
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Poppins:wght@300;400;500;600&family=Sacramento&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <style>
+        :root {
+            --bg-color: #ffd1dc;
+            --primary-pink: #ff4d6d;
+            --accent-purple: #7209b7;
+            --soft-white: rgba(255, 255, 255, 0.9);
+            --grid-line: rgba(255, 255, 255, 0.45);
+            --card-shadow: 0 12px 35px rgba(255, 77, 109, 0.18);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Poppins', sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            min-height: 100vh;
+            background-color: var(--bg-color);
+            background-image: 
+                linear-gradient(var(--grid-line) 1px, transparent 1px),
+                linear-gradient(90deg, var(--grid-line) 1px, transparent 1px);
+            background-size: 20px 20px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            overflow-x: hidden;
+            padding: 20px;
+        }
+
+        .music-banner {
+            background: #ff4d6d;
+            color: white;
+            font-size: 0.8rem;
+            font-weight: 600;
+            padding: 8px 18px;
+            border-radius: 20px;
+            margin-bottom: 12px;
+            box-shadow: 0 4px 12px rgba(255, 77, 109, 0.3);
+            cursor: pointer;
+            animation: pulse 1.5s infinite;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.03); }
+            100% { transform: scale(1); }
+        }
+
+        .container {
+            width: 100%;
+            max-width: 440px;
+            min-height: 85vh;
+            background: var(--soft-white);
+            backdrop-filter: blur(14px);
+            -webkit-backdrop-filter: blur(14px);
+            border-radius: 30px;
+            box-shadow: var(--card-shadow);
+            border: 2px solid #ffffff;
+            padding: 30px 22px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+
+        .music-btn {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            width: 38px;
+            height: 38px;
+            border-radius: 50%;
+            background: #ffffff;
+            border: 2px solid #ffccd5;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+            font-size: 1.1rem;
+            z-index: 100;
+        }
+
+        .page {
+            display: none;
+            width: 100%;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            margin: auto 0;
+            animation: fadeIn 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+
+        .page.active {
+            display: flex;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(12px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .title-bubbly {
+            font-family: 'Fredoka One', cursive;
+            font-size: 2.1rem;
+            color: var(--primary-pink);
+            text-shadow: 2px 2px 0px #ffffff;
+            margin-bottom: 8px;
+            text-align: center;
+        }
+
+        .subtitle-cursive {
+            font-family: 'Sacramento', cursive;
+            font-size: 2.6rem;
+            color: var(--accent-purple);
+            text-align: center;
+        }
+
+        .badge-tag {
+            background: #ff85a1;
+            color: white;
+            font-size: 0.75rem;
+            padding: 4px 14px;
+            border-radius: 20px;
+            display: inline-block;
+            margin-bottom: 12px;
+            font-weight: 600;
+        }
+
+        .btn-main {
+            background: linear-gradient(135deg, #ff4d6d, #c77dff);
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 30px;
+            font-size: 0.95rem;
+            font-weight: 600;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(255, 77, 109, 0.3);
+            transition: all 0.2s ease;
+            margin-top: 20px;
+        }
+
+        .btn-main:hover {
+            transform: scale(1.03);
+            box-shadow: 0 6px 20px rgba(255, 77, 109, 0.4);
+        }
+
+        .timer-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 8px;
+            width: 100%;
+            margin: 28px 0;
+            justify-content: center;
+        }
+
+        .timer-box {
+            background: #ffffff;
+            border: 2px solid #ffccd5;
+            padding: 12px 4px;
+            border-radius: 18px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.02);
+            text-align: center;
+        }
+
+        .timer-val {
+            font-size: 1.6rem;
+            font-weight: 600;
+            color: var(--accent-purple);
+        }
+
+        .timer-lbl {
+            font-size: 0.65rem;
+            color: #aaa;
+            text-transform: uppercase;
+            margin-top: 2px;
+        }
+
+        .cake-wrapper {
+            position: relative;
+            width: 180px;
+            height: 180px;
+            margin: 20px auto;
+            cursor: pointer;
+        }
+
+        .flame-anim {
+            animation: flicker 0.6s infinite alternate;
+            transform-origin: center bottom;
+        }
+
+        @keyframes flicker {
+            0% { transform: scale(1) rotate(-2deg); }
+            100% { transform: scale(1.1) rotate(2deg); }
+        }
+
+        .book-container {
+            width: 100%;
+            height: 250px;
+            perspective: 1000px;
+            margin: 15px 0;
+            cursor: pointer;
+        }
+
+        .book-card {
+            width: 100%;
+            height: 100%;
+            position: relative;
+            transform-style: preserve-3d;
+            transition: transform 0.8s ease;
+        }
+
+        .book-container.flipped .book-card {
+            transform: rotateY(180deg);
+        }
+
+        .book-front, .book-back {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            backface-visibility: hidden;
+            border-radius: 20px;
+            padding: 22px;
+            background: #ffffff;
+            border: 2px solid #ffb3c6;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.04);
+        }
+
+        .book-back {
+            transform: rotateY(180deg);
+            background: #fff0f5;
+        }
+
+        .timeline-card {
+            background: white;
+            border-radius: 20px;
+            padding: 20px;
+            width: 100%;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.03);
+            border: 1px solid #ffe0e9;
+            margin: 15px 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+        }
+
+        .timeline-img {
+            width: 100%;
+            height: 130px;
+            background: #ffd1dc;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3rem;
+            margin-bottom: 12px;
+        }
+
+        .envelope-wrapper {
+            width: 100%;
+            margin: 15px 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .envelope-box {
+            width: 190px;
+            height: 125px;
+            background: #ff85a1;
+            border-radius: 14px;
+            margin: 0 auto;
+            position: relative;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.08);
+        }
+
+        .heart-seal {
+            width: 42px;
+            height: 42px;
+            background: #ff4d6d;
+            border-radius: 50%;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+        }
+
+        .notes-grid {
+            display: none;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+            margin-top: 15px;
+            width: 100%;
+        }
+
+        .note-card {
+            background: white;
+            padding: 12px;
+            border-radius: 14px;
+            font-size: 0.75rem;
+            text-align: center;
+            border: 1px solid #ffe0e9;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.02);
+            color: #555;
+            line-height: 1.4;
+        }
+
+        .audio-card {
+            background: white;
+            padding: 20px;
+            border-radius: 20px;
+            width: 100%;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.04);
+            border: 1px solid #ffe0e9;
+            margin: 15px 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+        }
+
+        audio {
+            width: 100%;
+            margin-top: 10px;
+        }
+
+        .wish-text {
+            font-size: 0.85rem;
+            color: #555;
+            line-height: 1.6;
+            margin-top: 15px;
+            font-style: italic;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="music-banner" id="musicBanner" onclick="startMusic()">
+        🎵 Tap anywhere to enable background music ✨
+    </div>
+
+    <div class="container">
+
+        <button class="music-btn" id="musicBtn" onclick="toggleMusic()">🎵</button>
+
+        <!-- Working online soft tune stream -->
+        <audio id="bgMusic" loop preload="auto">
+            <source src="https://cdn.pixabay.com/download/audio/2022/05/27/audio_1808fbf07a.mp3?filename=soft-piano-melody-112191.mp3" type="audio/mp3">
+        </audio>
+
+        <!-- PAGE 1: 10-SECOND DEMO COUNTDOWN -->
+        <div class="page active" id="p1">
+            <h1 class="title-bubbly">Birthday Countdown</h1>
+            <p style="font-size: 0.85rem; color: #888;">Opening automatically in 10 seconds... ✨</p>
+
+            <div class="timer-grid">
+                <div class="timer-box"><div class="timer-val" id="d">00</div><div class="timer-lbl">Days</div></div>
+                <div class="timer-box"><div class="timer-val" id="h">00</div><div class="timer-lbl">Hours</div></div>
+                <div class="timer-box"><div class="timer-val" id="m">00</div><div class="timer-lbl">Minutes</div></div>
+                <div class="timer-box"><div class="timer-val" id="s">10</div><div class="timer-lbl">Seconds</div></div>
+            </div>
+
+            <p style="font-size: 0.8rem; color: #ff85a1;">✨ Tap screen to start music</p>
+        </div>
+
+        <!-- PAGE 2: CAKE & CANDLE -->
+        <div class="page" id="p2">
+            <h1 class="title-bubbly">Make A Wish!</h1>
+            <p style="font-size: 0.85rem; color: #888;">Tap the flame to blow out the candle 🕯️</p>
+
+            <div class="cake-wrapper" onclick="blowCandle()">
+                <svg viewBox="0 0 200 200" width="100%" height="100%">
+                    <ellipse cx="100" cy="160" rx="70" ry="10" fill="#e0e0e0"/>
+                    <rect x="45" y="105" width="110" height="45" rx="8" fill="#ffb3c6"/>
+                    <rect x="55" y="75" width="90" height="32" rx="6" fill="#ff85a1"/>
+                    <path d="M55 75 Q 65 85, 75 75 Q 85 85, 95 75 Q 105 85, 115 75 Q 125 85, 135 75 L 135 70 L 55 70 Z" fill="#ffffff"/>
+                    <rect x="96" y="45" width="8" height="28" fill="#7209b7" rx="2"/>
+                    <path id="flame" class="flame-anim" d="M100 25 Q 106 35, 100 43 Q 94 35, 100 25 Z" fill="#ffb703"/>
+                </svg>
+            </div>
+
+            <p id="candleStatus" style="font-size: 0.8rem; color: #aaa;">Click candle to blow out</p>
+            <button class="btn-main" id="p2Next" style="display:none;" onclick="goToPage(3)">Open Digital Book 📖</button>
+        </div>
+
+        <!-- PAGE 3: SCRAPBOOK FLIP CARD -->
+        <div class="page" id="p3">
+            <h1 class="subtitle-cursive">Our Memory Book</h1>
+            <p style="font-size: 0.8rem; color: #888; margin-bottom: 10px;">Tap book page to flip 📖</p>
+
+            <div class="book-container" onclick="this.classList.toggle('flipped')">
+                <div class="book-card">
+                    <div class="book-front">
+                        <span style="font-size: 2.5rem; margin-bottom: 8px;">🌸</span>
+                        <h3 style="color: var(--primary-pink);">When I First Saw You</h3>
+                        <p style="font-size: 0.75rem; color: #999; margin-top: 10px;">( Tap to read memory )</p>
+                    </div>
+                    <div class="book-back">
+                        <p style="font-size: 0.82rem; color: #555; line-height: 1.5;">
+                            "I still remember the first moment I saw you. Quiet, simple, and instantly special. That single glimpse stayed with me forever."
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <button class="btn-main" onclick="goToPage(4)">View Timeline ⏳</button>
+        </div>
+
+        <!-- PAGE 4: LOVE TIMELINE -->
+        <div class="page" id="p4">
+            <h1 class="subtitle-cursive">Our Story Timeline</h1>
+            <span class="badge-tag">Memory #1</span>
+
+            <div class="timeline-card">
+                <div class="timeline-img" id="tlIcon">💬</div>
+                <h3 id="tlTitle" style="color: #7209b7; font-size: 1rem;">First Conversation</h3>
+                <p id="tlDesc" style="font-size: 0.8rem; color: #666; margin-top: 6px;">
+                    That simple "Hello" that started the sweetest chapter.
+                </p>
+            </div>
+
+            <button class="btn-main" onclick="nextTimelineStep()">Next Memory ➔</button>
+            <button class="btn-main" style="background: #9d4edd; margin-top: 8px;" onclick="goToPage(5)">Open Letters ✉</button>
+        </div>
+
+        <!-- PAGE 5: ENVELOPE OF LOVE -->
+        <div class="page" id="p5">
+            <h1 class="subtitle-cursive">Envelope Of Love</h1>
+            <p style="font-size: 0.8rem; color: #888; margin-bottom: 10px;">Click envelope seal to unlock notes 💖</p>
+
+            <div class="envelope-wrapper">
+                <div class="envelope-box" onclick="openEnvelope()">
+                    <div class="heart-seal">💌</div>
+                </div>
+
+                <div class="notes-grid" id="notesGrid">
+                    <div class="note-card">✨ Since our first chat, you’ve been the quiet spark that brightens my day.</div>
+                    <div class="note-card">🌸 Every notification from you feels like a quiet smile.</div>
+                    <div class="note-card">🌟 One picture from you can change my whole mood.</div>
+                    <div class="note-card">💖 Here's to forever moments and endless memories.</div>
+                </div>
+            </div>
+
+            <button class="btn-main" onclick="goToPage(6)">Special Song For You 🎵</button>
+        </div>
+
+        <!-- PAGE 6: SONG & FINAL WISH -->
+        <div class="page" id="p6">
+            <h1 class="subtitle-cursive">A Song For You</h1>
+            
+            <div class="audio-card">
+                <p style="font-size: 0.85rem; color: var(--primary-pink); font-weight: 600;">Play soundtrack 🎵</p>
+                <audio controls src="https://cdn.pixabay.com/download/audio/2022/05/27/audio_1808fbf07a.mp3?filename=soft-piano-melody-112191.mp3"></audio>
+                
+                <p class="wish-text">
+                    "Just like the stars that light up the night, your presence brings warmth and light into my world. Happy Birthday!" ✨
+                </p>
+            </div>
+
+            <button class="btn-main" onclick="triggerConfetti()">Celebrate 🎉</button>
+        </div>
+
+    </div>
+
+    <script>
+        function goToPage(pageNum) {
+            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+            document.getElementById(`p${pageNum}`).classList.add('active');
+        }
+
+        // 10-Second Countdown Demo
+        let timer = 10;
+        const s = document.getElementById('s');
+        const countInterval = setInterval(() => {
+            timer--;
+            s.textContent = timer < 10 ? '0' + timer : timer;
+            if (timer <= 0) {
+                clearInterval(countInterval);
+                goToPage(2);
+                confetti({ particleCount: 80, spread: 70, origin: { y: 0.6 } });
+            }
+        }, 1000);
+
+        function startMusic() {
+            const music = document.getElementById('bgMusic');
+            music.play().then(() => {
+                document.getElementById('musicBtn').textContent = '🎶';
+                document.getElementById('musicBanner').style.display = 'none';
+            }).catch(e => console.log("Audio permission pending"));
+        }
+
+        function toggleMusic() {
+            const music = document.getElementById('bgMusic');
+            const btn = document.getElementById('musicBtn');
+            if (music.paused) {
+                startMusic();
+            } else {
+                music.pause();
+                btn.textContent = '🎵';
+            }
+        }
+
+        document.body.addEventListener('click', () => {
+            startMusic();
+        }, { once: true });
+
+        function blowCandle() {
+            document.getElementById('flame').style.display = 'none';
+            document.getElementById('candleStatus').textContent = "Wish Made! ✨";
+            document.getElementById('p2Next').style.display = 'inline-block';
+            confetti({ particleCount: 60, spread: 60, origin: { y: 0.6 } });
+        }
+
+        const timelineData = [
+            { icon: "💬", title: "First Message", desc: "That shy hello that started our sweetest conversations." },
+            { icon: "✨", title: "First Meetup", desc: "The moment paths crossed and everything felt special." },
+            { icon: "💖", title: "Forever Memories", desc: "Endless talks, shared smiles, and quiet happiness." }
+        ];
+        let currentTl = 0;
+
+        function nextTimelineStep() {
+            currentTl = (currentTl + 1) % timelineData.length;
+            document.getElementById('tlIcon').textContent = timelineData[currentTl].icon;
+            document.getElementById('tlTitle').textContent = timelineData[currentTl].title;
+            document.getElementById('tlDesc').textContent = timelineData[currentTl].desc;
+        }
+
+        function openEnvelope() {
+            document.getElementById('notesGrid').style.display = 'grid';
+            confetti({ particleCount: 50, spread: 70, origin: { y: 0.6 } });
+        }
+
+        function triggerConfetti() {
+            confetti({
+                particleCount: 120,
+                spread: 80,
+                origin: { y: 0.6 }
+            });
+        }
+    </script>
+</body>
+</html>
